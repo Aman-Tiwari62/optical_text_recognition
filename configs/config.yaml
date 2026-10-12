@@ -1,0 +1,43 @@
+project:
+  name: handwritten_text_recognition
+  seed: 42
+
+paths:
+  root_dir: .
+  annotation_file: data/raw/iam_words/words.txt
+  image_root: data/raw/iam_words/words
+  processed_dir: data/processed
+  splits_path: data/processed/splits.json
+  vocab_path: data/processed/vocabulary.json
+
+preprocessing:
+  image_height: 32
+  grayscale: true
+  normalize_mean: 0.5
+  normalize_std: 0.5
+  preserve_aspect_ratio: true
+  pad_value: 0.0
+
+training:
+  batch_size: 8
+  epochs: 20
+  learning_rate: 3e-4
+  weight_decay: 1e-5
+  num_workers: 0
+
+model:
+  cnn_channels: [32, 64, 128]
+  rnn_hidden_size: 128
+  rnn_num_layers: 2
+  dropout: 0.25
+
+split:
+  train_ratio: 0.8
+  val_ratio: 0.1
+  test_ratio: 0.1
+  grouping: form_id
+
+annotation:
+  include_err: false
+  unknown_character_policy: "replace_with_unk"
+  min_record_length: 1
