@@ -364,7 +364,7 @@ def collate_iam_batch(
     batch: list[dict[str, Any]],
     blank_index: int = 0,
     pad_value: float = 0.0,
-    pool_steps: int = 3,
+    horizontal_pool_steps: int = 1,
 ) -> dict[str, Any]:
     """Pad variable-width images and provide pixel widths plus CNN sequence lengths."""
 
@@ -372,7 +372,7 @@ def collate_iam_batch(
     targets = [item["target"] for item in batch]
     image_widths = torch.tensor([img.shape[-1] for img in images], dtype=torch.long)
     target_lengths = torch.tensor([target.numel() for target in targets], dtype=torch.long)
-    stride = 2**pool_steps
+    stride = 2**horizontal_pool_steps
     max_width = max(stride, math.ceil(int(image_widths.max().item()) / stride) * stride)
     input_lengths = torch.div(image_widths + stride - 1, stride, rounding_mode="floor")
     max_target_len = int(target_lengths.max().item())

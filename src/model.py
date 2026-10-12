@@ -31,12 +31,16 @@ class CNNBiLSTMCTC(nn.Module):
 
         layers: list[nn.Module] = []
         in_channels = 1
-        for out_channels in self.cnn_channels:
+        for block_index, out_channels in enumerate(self.cnn_channels):
+            if block_index == 0:
+                pool = nn.MaxPool2d(kernel_size=(2, 2), stride=(2, 2))
+            else:
+                pool = nn.MaxPool2d(kernel_size=(2, 1), stride=(2, 1))
             layers.extend(
                 [
                     nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=1),
                     nn.ReLU(inplace=True),
-                    nn.MaxPool2d(kernel_size=2, stride=2),
+                    pool,
                 ]
             )
             in_channels = out_channels
@@ -71,10 +75,9 @@ class CNNBiLSTMCTC(nn.Module):
         return logits
 
     def compute_output_lengths(self, input_widths: list[int] | torch.Tensor) -> torch.Tensor:
-        """Return per-image time steps after the CNN's 2x pooling operations."""
+        """Return time steps after the CNN's single 2x horizontal pooling operation."""
         if torch.is_tensor(input_widths):
             widths = input_widths.to(dtype=torch.long)
         else:
             widths = torch.tensor(input_widths, dtype=torch.long)
-        stride = 2 ** len(self.cnn_channels)
-        return torch.div(widths + stride - 1, stride, rounding_mode="floor")
+        return torch.div(widths + 1, 2, rounding_mode="floor")

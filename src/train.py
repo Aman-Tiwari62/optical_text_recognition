@@ -146,7 +146,7 @@ def build_data_loaders(
         collate_iam_batch,
         blank_index=vocabulary.index("<blank>"),
         pad_value=config.pad_value,
-        pool_steps=len(config.cnn_channels),
+        horizontal_pool_steps=1,
     )
     generator = torch.Generator().manual_seed(config.seed)
     actual_batch_size = batch_size or config.batch_size

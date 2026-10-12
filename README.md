@@ -25,6 +25,7 @@ The current validation run found 44,564 annotation rows: 38,305 `ok` and 6,259 `
 - CNN layers learn local visual features from handwriting strokes.
 - BiLSTM models the temporal order of those features across the word image.
 - CTC loss removes the need for frame-level character labels; it is the standard choice for OCR and handwriting recognition at word level.
+- CNN pooling reduces image height while downsampling width only once. Preserving more horizontal time steps is important for short/narrow word images, where excessive width reduction leaves too few CTC frames to represent every character.
 
 ### Why not hardcode paths?
 
